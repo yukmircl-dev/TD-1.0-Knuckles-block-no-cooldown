@@ -7,10 +7,7 @@ local ingameHud = gui:WaitForChild("ingameHud")
 local abilities = ingameHud:WaitForChild("abilities")
 local mobile = abilities:WaitForChild("mobile")
 
--- Cambiado de "Dash" a "Block"
 local block = mobile:WaitForChild("Block")
 
 task.wait(1)
 block:Destroy()
-
--- hi
