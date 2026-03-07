@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/yukmircl-dev/TD-1.0-Knuckles-block-no-cooldown/refs/heads/main/block%20td%201.0%20script"))()
+
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local gui = playerGui:WaitForChild("gui")
