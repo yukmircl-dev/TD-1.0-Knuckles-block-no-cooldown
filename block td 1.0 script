@@ -7,7 +7,7 @@ local ingameHud = gui:WaitForChild("ingameHud")
 local abilities = ingameHud:WaitForChild("abilities")
 local mobile = abilities:WaitForChild("mobile")
 
-local block = mobile:WaitForChild("Block")
+local block = mobile:WaitForChild("Punch")
 
 task.wait(1)
-block:Destroy()
+punch:Destroy()
