@@ -12,3 +12,5 @@ local block = mobile:WaitForChild("Block")
 
 task.wait(1)
 block:Destroy()
+
+-- hi
