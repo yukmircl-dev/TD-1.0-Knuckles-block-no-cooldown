@@ -1,17 +1,20 @@
--- Configuración de la GUI
+-- Configuración de la GUI Principal
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local UIPadding = Instance.new("UIPadding")
 
--- Propiedades de la Ventana Principal
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "AbilitiesExecutorV2"
+ScreenGui.Name = "AbilityHubScroll"
 
+-- Ventana Principal (Tamaño fijo y bonito)
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.Position = UDim2.new(0.5, -110, 0.5, -165)
-MainFrame.Size = UDim2.new(0, 220, 0, 330) -- Tamaño aumentado para 4 botones
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -125)
+MainFrame.Size = UDim2.new(0, 220, 0, 250) -- Altura fija
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -22,20 +25,39 @@ Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ULTIMATE ABILITY HUB"
+Title.Text = "ABILITY SCROLLER"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 15
 
--- Función generadora de botones
-local function createAbilityButton(name, text, pos, remoteFunc)
+-- Configuración del ScrollingFrame
+ScrollingFrame.Parent = MainFrame
+ScrollingFrame.BackgroundTransparency = 1
+ScrollingFrame.Position = UDim2.new(0, 0, 0, 40)
+ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Se ajusta solo
+ScrollingFrame.ScrollBarThickness = 4
+ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 255, 180)
+ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+-- Layout para ordenar los botones automáticamente
+UIListLayout.Parent = ScrollingFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+UIPadding.Parent = ScrollingFrame
+UIPadding.PaddingTop = UDim.new(0, 5)
+UIPadding.PaddingBottom = UDim.new(0, 5)
+
+-- Función creadora de botones optimizada para Scroll
+local function createAbilityButton(name, text, remoteFunc)
     local btn = Instance.new("TextButton")
     local active = false
     
     btn.Name = name
-    btn.Parent = MainFrame
+    btn.Parent = ScrollingFrame
     btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    btn.Position = pos
-    btn.Size = UDim2.new(0.85, 0, 0, 55)
+    btn.Size = UDim2.new(0.9, 0, 0, 45) -- Botones más compactos
     btn.Font = Enum.Font.GothamSemibold
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 255, 180)
@@ -65,19 +87,23 @@ local function createAbilityButton(name, text, pos, remoteFunc)
     end)
 end
 
--- Lista de Botones (Nombre, Texto, Posición, Función)
-createAbilityButton("Zombie", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.15, 0), function()
+-- Lista de Habilidades (Ahora con Monotrolly)
+createAbilityButton("Zombie", "Spam Ability Zombie", function()
     game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
 end)
 
-createAbilityButton("Corrupted", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.35, 0), function()
+createAbilityButton("Corrupted", "Spam Ability Corrupted", function()
     game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
 end)
 
-createAbilityButton("Punisher", "Spam Ability Punisher", UDim2.new(0.075, 0, 0.55, 0), function()
+createAbilityButton("Punisher", "Spam Ability Punisher", function()
     game:GetService("Players").LocalPlayer.Character["Punishing Axe"].Punish:FireServer()
 end)
 
-createAbilityButton("BlueBrand", "Spam Ability BlueBrand", UDim2.new(0.075, 0, 0.75, 0), function()
+createAbilityButton("BlueBrand", "Spam Ability BlueBrand", function()
     game:GetService("Players").LocalPlayer.Character.Bluebrand.MegaChop:FireServer()
+end)
+
+createAbilityButton("Monotrolly", "Spam Ability Monotrolly", function()
+    game:GetService("Players").LocalPlayer.Character["Money Axe"].Upgrade:FireServer()
 end)
