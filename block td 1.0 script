@@ -1,94 +1,79 @@
+-- Configuración de la GUI
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local ZombieBtn = Instance.new("TextButton")
-local CorruptBtn = Instance.new("TextButton")
 
 -- Propiedades de la Ventana Principal
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "CustomAbilityGui"
+ScreenGui.Name = "AbilitiesExecutor"
 
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Position = UDim2.new(0.5, -100, 0.5, -100)
-MainFrame.Size = UDim2.new(0, 220, 0, 200) -- Un poco más grande para los 2 botones
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -135)
+MainFrame.Size = UDim2.new(0, 220, 0, 270) -- Tamaño ajustado para 3 botones
 MainFrame.Active = true
-MainFrame.Selectable = true
 MainFrame.Draggable = true
 
-local MainCorner = Instance.new("UICorner", MainFrame)
-MainCorner.CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
 -- Título
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Size = UDim2.new(1, 0, 0, 45)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ABILITY MANAGER"
+Title.Text = "ABILITY HUB"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
 
--- Función para crear botones con el mismo estilo
-local function createButton(name, text, pos)
+-- Función para crear botones automáticamente
+local function createAbilityButton(name, text, pos, remoteFunc)
     local btn = Instance.new("TextButton")
+    local active = false
+    
     btn.Name = name
     btn.Parent = MainFrame
-    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     btn.Position = pos
-    btn.Size = UDim2.new(0.85, 0, 0, 50)
+    btn.Size = UDim2.new(0.85, 0, 0, 60)
     btn.Font = Enum.Font.GothamSemibold
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(0, 255, 127)
+    btn.TextColor3 = Color3.fromRGB(0, 255, 150)
     btn.TextSize = 13
     btn.TextWrapped = true
     
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-    return btn
+    
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        if active then
+            btn.Text = "STOP " .. name:upper()
+            btn.TextColor3 = Color3.fromRGB(255, 70, 70)
+            btn.BackgroundColor3 = Color3.fromRGB(50, 30, 30)
+            
+            task.spawn(function()
+                while active do
+                    pcall(remoteFunc)
+                    task.wait(0.1)
+                end
+            end)
+        else
+            btn.Text = text
+            btn.TextColor3 = Color3.fromRGB(0, 255, 150)
+            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        end
+    end)
 end
 
--- Crear Botones
-local ZombieBtn = createButton("ZombieBtn", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.25, 0))
-local CorruptBtn = createButton("CorruptBtn", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.6, 0))
-
--- Lógica Zombie
-local zombieSpam = false
-ZombieBtn.MouseButton1Click:Connect(function()
-    zombieSpam = not zombieSpam
-    if zombieSpam then
-        ZombieBtn.Text = "STOP"
-        ZombieBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
-        task.spawn(function()
-            while zombieSpam do
-                pcall(function()
-                    game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
-                end)
-                task.wait(0.1)
-            end
-        end)
-    else
-        ZombieBtn.Text = "Spam Ability Zombie"
-        ZombieBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
-    end
+-- Configuración de los 3 botones con sus respectivas rutas
+createAbilityButton("Zombie", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.18, 0), function()
+    game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
 end)
 
--- Lógica Corrupted
-local corruptSpam = false
-CorruptBtn.MouseButton1Click:Connect(function()
-    corruptSpam = not corruptSpam
-    if corruptSpam then
-        CorruptBtn.Text = "STOP"
-        CorruptBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
-        task.spawn(function()
-            while corruptSpam do
-                pcall(function()
-                    game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
-                end)
-                task.wait(0.1)
-            end
-        end)
-    else
-        CorruptBtn.Text = "Spam Ability Corrupted"
-        CorruptBtn.TextColor3 = Color3.fromRGB(50, 50, 50)
-    end
+createAbilityButton("Corrupted", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.43, 0), function()
+    game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
+end)
+
+createAbilityButton("Punisher", "Spam Ability Punisher", UDim2.new(0.075, 0, 0.68, 0), function()
+    game:GetService("Players").LocalPlayer.Character["Punishing Axe"].Punish:FireServer()
 end)
