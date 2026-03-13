@@ -7,14 +7,14 @@ local UIListLayout = Instance.new("UIListLayout")
 local UIPadding = Instance.new("UIPadding")
 
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "AbilityHubScroll"
+ScreenGui.Name = "UltimateAbilityHub"
 
--- Ventana Principal (Tamaño fijo y bonito)
+-- Ventana Principal
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Position = UDim2.new(0.5, -110, 0.5, -125)
-MainFrame.Size = UDim2.new(0, 220, 0, 250) -- Altura fija
+MainFrame.Size = UDim2.new(0, 220, 0, 250) 
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -25,21 +25,20 @@ Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ABILITY SCROLLER"
+Title.Text = "ABILITY HUB"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 15
 
--- Configuración del ScrollingFrame
+-- ScrollingFrame
 ScrollingFrame.Parent = MainFrame
 ScrollingFrame.BackgroundTransparency = 1
 ScrollingFrame.Position = UDim2.new(0, 0, 0, 40)
 ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
-ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Se ajusta solo
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 ScrollingFrame.ScrollBarThickness = 4
 ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 255, 180)
 ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
--- Layout para ordenar los botones automáticamente
 UIListLayout.Parent = ScrollingFrame
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 8)
@@ -49,7 +48,7 @@ UIPadding.Parent = ScrollingFrame
 UIPadding.PaddingTop = UDim.new(0, 5)
 UIPadding.PaddingBottom = UDim.new(0, 5)
 
--- Función creadora de botones optimizada para Scroll
+-- Función creadora de botones
 local function createAbilityButton(name, text, remoteFunc)
     local btn = Instance.new("TextButton")
     local active = false
@@ -57,11 +56,11 @@ local function createAbilityButton(name, text, remoteFunc)
     btn.Name = name
     btn.Parent = ScrollingFrame
     btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    btn.Size = UDim2.new(0.9, 0, 0, 45) -- Botones más compactos
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
     btn.Font = Enum.Font.GothamSemibold
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 255, 180)
-    btn.TextSize = 12
+    btn.TextSize = 11 -- Tamaño de letra ajustado
     btn.TextWrapped = true
     
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
@@ -87,7 +86,7 @@ local function createAbilityButton(name, text, remoteFunc)
     end)
 end
 
--- Lista de Habilidades (Ahora con Monotrolly)
+-- Lista de Habilidades
 createAbilityButton("Zombie", "Spam Ability Zombie", function()
     game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
 end)
@@ -106,4 +105,17 @@ end)
 
 createAbilityButton("Monotrolly", "Spam Ability Monotrolly", function()
     game:GetService("Players").LocalPlayer.Character["Money Axe"].Upgrade:FireServer()
+end)
+
+-- NUEVAS HABILIDADES
+createAbilityButton("Funny", "Spam Ability Funny", function()
+    game:GetService("Players").LocalPlayer.Character.FunnyAxe.Laughjjj:FireServer()
+end)
+
+createAbilityButton("Impasta2", "Spam Ability Impasta2", function()
+    game:GetService("Players").LocalPlayer.Character.ImpastaAxe.Swing:FireServer()
+end)
+
+createAbilityButton("Impasta3", "Spam Ability Impasta3", function()
+    game:GetService("Players").LocalPlayer.Character.ImpastaAxe.Fire:FireServer()
 end)
