@@ -1,77 +1,94 @@
--- Configuración de la GUI
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local ActionBtn = Instance.new("TextButton")
-local UICorner = Instance.new("UICorner")
-local UIStroke = Instance.new("UIStroke")
+local ZombieBtn = Instance.new("TextButton")
+local CorruptBtn = Instance.new("TextButton")
 
 -- Propiedades de la Ventana Principal
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "ZombieAbilityGui"
+ScreenGui.Name = "CustomAbilityGui"
 
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
-MainFrame.Size = UDim2.new(0, 200, 0, 150)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 220, 0, 200) -- Un poco más grande para los 2 botones
 MainFrame.Active = true
-MainFrame.Draggable = true -- Para que puedas moverla
+MainFrame.Selectable = true
+MainFrame.Draggable = true
 
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 10)
 
 -- Título
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ZOMBIE MOD"
+Title.Text = "ABILITY MANAGER"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 18
+Title.TextSize = 16
 
--- Botón de Acción
-ActionBtn.Parent = MainFrame
-ActionBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-ActionBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
-ActionBtn.Size = UDim2.new(0.8, 0, 0.4, 0)
-ActionBtn.Font = Enum.Font.GothamSemibold
-ActionBtn.Text = "Spam Ability Zombie"
-ActionBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
-ActionBtn.TextSize = 14
-ActionBtn.TextWrapped = true
-
-Instance.new("UICorner", ActionBtn).CornerRadius = UDim.new(0, 8)
-
--- Lógica del Spam
-local isSpaming = false
-
-ActionBtn.MouseButton1Click:Connect(function()
-    isSpaming = not isSpaming
+-- Función para crear botones con el mismo estilo
+local function createButton(name, text, pos)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Parent = MainFrame
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Position = pos
+    btn.Size = UDim2.new(0.85, 0, 0, 50)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(0, 255, 127)
+    btn.TextSize = 13
+    btn.TextWrapped = true
     
-    if isSpaming then
-        ActionBtn.Text = "STOP"
-        ActionBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
-        
-        -- Ejecutar el spam en un hilo separado
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    return btn
+end
+
+-- Crear Botones
+local ZombieBtn = createButton("ZombieBtn", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.25, 0))
+local CorruptBtn = createButton("CorruptBtn", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.6, 0))
+
+-- Lógica Zombie
+local zombieSpam = false
+ZombieBtn.MouseButton1Click:Connect(function()
+    zombieSpam = not zombieSpam
+    if zombieSpam then
+        ZombieBtn.Text = "STOP"
+        ZombieBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
         task.spawn(function()
-            while isSpaming do
-                local player = game:GetService("Players").LocalPlayer
-                local character = player.Character
-                
-                if character then
-                    local attack = character:FindFirstChild("Attack")
-                    if attack then
-                        local devour = attack:FindFirstChild("Devour")
-                        if devour and devour:IsA("RemoteEvent") then
-                            devour:FireServer()
-                        end
-                    end
-                end
-                task.wait(0.1) -- Ajusta la velocidad aquí (0.1 es rápido)
+            while zombieSpam do
+                pcall(function()
+                    game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
+                end)
+                task.wait(0.1)
             end
         end)
     else
-        ActionBtn.Text = "Spam Ability Zombie"
-        ActionBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+        ZombieBtn.Text = "Spam Ability Zombie"
+        ZombieBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+    end
+end)
+
+-- Lógica Corrupted
+local corruptSpam = false
+CorruptBtn.MouseButton1Click:Connect(function()
+    corruptSpam = not corruptSpam
+    if corruptSpam then
+        CorruptBtn.Text = "STOP"
+        CorruptBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+        task.spawn(function()
+            while corruptSpam do
+                pcall(function()
+                    game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
+                end)
+                task.wait(0.1)
+            end
+        end)
+    else
+        CorruptBtn.Text = "Spam Ability Corrupted"
+        CorruptBtn.TextColor3 = Color3.fromRGB(50, 50, 50)
     end
 end)
