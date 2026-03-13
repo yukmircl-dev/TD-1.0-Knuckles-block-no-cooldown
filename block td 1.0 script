@@ -5,13 +5,13 @@ local Title = Instance.new("TextLabel")
 
 -- Propiedades de la Ventana Principal
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "AbilitiesExecutor"
+ScreenGui.Name = "AbilitiesExecutorV2"
 
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-MainFrame.Position = UDim2.new(0.5, -110, 0.5, -135)
-MainFrame.Size = UDim2.new(0, 220, 0, 270) -- Tamaño ajustado para 3 botones
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -165)
+MainFrame.Size = UDim2.new(0, 220, 0, 330) -- Tamaño aumentado para 4 botones
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -20,36 +20,36 @@ Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 -- Título
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Size = UDim2.new(1, 0, 0, 40)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ABILITY HUB"
+Title.Text = "ULTIMATE ABILITY HUB"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 16
+Title.TextSize = 15
 
--- Función para crear botones automáticamente
+-- Función generadora de botones
 local function createAbilityButton(name, text, pos, remoteFunc)
     local btn = Instance.new("TextButton")
     local active = false
     
     btn.Name = name
     btn.Parent = MainFrame
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     btn.Position = pos
-    btn.Size = UDim2.new(0.85, 0, 0, 60)
+    btn.Size = UDim2.new(0.85, 0, 0, 55)
     btn.Font = Enum.Font.GothamSemibold
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(0, 255, 150)
-    btn.TextSize = 13
+    btn.TextColor3 = Color3.fromRGB(0, 255, 180)
+    btn.TextSize = 12
     btn.TextWrapped = true
     
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
     
     btn.MouseButton1Click:Connect(function()
         active = not active
         if active then
             btn.Text = "STOP " .. name:upper()
-            btn.TextColor3 = Color3.fromRGB(255, 70, 70)
-            btn.BackgroundColor3 = Color3.fromRGB(50, 30, 30)
+            btn.TextColor3 = Color3.fromRGB(255, 80, 80)
+            btn.BackgroundColor3 = Color3.fromRGB(45, 30, 30)
             
             task.spawn(function()
                 while active do
@@ -59,21 +59,25 @@ local function createAbilityButton(name, text, pos, remoteFunc)
             end)
         else
             btn.Text = text
-            btn.TextColor3 = Color3.fromRGB(0, 255, 150)
-            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            btn.TextColor3 = Color3.fromRGB(0, 255, 180)
+            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         end
     end)
 end
 
--- Configuración de los 3 botones con sus respectivas rutas
-createAbilityButton("Zombie", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.18, 0), function()
+-- Lista de Botones (Nombre, Texto, Posición, Función)
+createAbilityButton("Zombie", "Spam Ability Zombie", UDim2.new(0.075, 0, 0.15, 0), function()
     game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
 end)
 
-createAbilityButton("Corrupted", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.43, 0), function()
+createAbilityButton("Corrupted", "Spam Ability Corrupted", UDim2.new(0.075, 0, 0.35, 0), function()
     game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
 end)
 
-createAbilityButton("Punisher", "Spam Ability Punisher", UDim2.new(0.075, 0, 0.68, 0), function()
+createAbilityButton("Punisher", "Spam Ability Punisher", UDim2.new(0.075, 0, 0.55, 0), function()
     game:GetService("Players").LocalPlayer.Character["Punishing Axe"].Punish:FireServer()
+end)
+
+createAbilityButton("BlueBrand", "Spam Ability BlueBrand", UDim2.new(0.075, 0, 0.75, 0), function()
+    game:GetService("Players").LocalPlayer.Character.Bluebrand.MegaChop:FireServer()
 end)
