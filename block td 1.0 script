@@ -6,7 +6,7 @@ local ScrollingFrame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
 local UIPadding = Instance.new("UIPadding")
 
-ScreenGui.Parent = game.CoreGui
+ScreenGui.Parent = game:GetService("CoreGui")
 ScreenGui.Name = "UltimateAbilityHub"
 
 -- Ventana Principal
@@ -14,13 +14,42 @@ MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Position = UDim2.new(0.5, -110, 0.5, -125)
-MainFrame.Size = UDim2.new(0, 220, 0, 250) 
+MainFrame.Size = UDim2.new(0, 220, 0, 250)
 MainFrame.Active = true
-MainFrame.Draggable = true
+
+-- Sistema de arrastre moderno
+local UserInputService = game:GetService("UserInputService")
+local dragging, dragInput, dragStart, startPos
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
 
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
--- Títulof
+-- Título
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 40)
@@ -48,11 +77,10 @@ UIPadding.Parent = ScrollingFrame
 UIPadding.PaddingTop = UDim.new(0, 5)
 UIPadding.PaddingBottom = UDim.new(0, 5)
 
--- Función creadora de botones
+-- Función creadora de botones estándar (Spam de habilidades)
 local function createAbilityButton(name, text, remoteFunc)
     local btn = Instance.new("TextButton")
     local active = false
-    
     btn.Name = name
     btn.Parent = ScrollingFrame
     btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -60,18 +88,16 @@ local function createAbilityButton(name, text, remoteFunc)
     btn.Font = Enum.Font.GothamSemibold
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 255, 180)
-    btn.TextSize = 11 -- Tamaño de letra ajustado
+    btn.TextSize = 11
     btn.TextWrapped = true
-    
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    
+
     btn.MouseButton1Click:Connect(function()
         active = not active
         if active then
             btn.Text = "STOP " .. name:upper()
             btn.TextColor3 = Color3.fromRGB(255, 80, 80)
             btn.BackgroundColor3 = Color3.fromRGB(45, 30, 30)
-            
             task.spawn(function()
                 while active do
                     pcall(remoteFunc)
@@ -86,36 +112,84 @@ local function createAbilityButton(name, text, remoteFunc)
     end)
 end
 
--- Lista de Habilidades
-createAbilityButton("Zombie", "Spam Ability Zombie", function()
-    game:GetService("Players").LocalPlayer.Character.Attack.Devour:FireServer()
-end)
+-- Función creadora especial para el Botón "Kill Trolls"
+local function createKillTrollsButton()
+    local btn = Instance.new("TextButton")
+    local active = false
+    btn.Name = "KillTrolls"
+    btn.Parent = ScrollingFrame
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.Font = Enum.Font.GothamBold
+    btn.Text = "Kill Trolls (Boss Rush/Trollbase)"
+    btn.TextColor3 = Color3.fromRGB(255, 215, 0) -- Color dorado para resaltar
+    btn.TextSize = 11
+    btn.TextWrapped = true
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
-createAbilityButton("Corrupted", "Spam Ability Corrupted", function()
-    game:GetService("Players").LocalPlayer.Character["Corrupt Axe"].Strike:FireServer()
-end)
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        if active then
+            btn.Text = "STOP KILL TROLLS"
+            btn.TextColor3 = Color3.fromRGB(255, 80, 80)
+            btn.BackgroundColor3 = Color3.fromRGB(45, 30, 30)
+            
+            getgenv().G = true
+            getgenv().Creator = 'https://discord.gg/B3HqPPzFYr - HalloweenGaster'
+            
+            task.spawn(function()
+                while active and getgenv().G and getgenv().Creator == 'https://discord.gg/B3HqPPzFYr - HalloweenGaster' do
+                    pcall(function()
+                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", 112412400000)
+                        sethiddenproperty(game.Players.LocalPlayer, "MaxSimulationRadius", 112412400000)
+                        for _, d in pairs(game.Workspace:GetDescendants()) do
+                            if d.ClassName == 'Humanoid' and d.Parent.Name ~= game.Players.LocalPlayer.Name then
+                                d.Health = 0
+                            end
+                        end
+                    end)
+                    task.wait(1)
+                end
+            end)
+        else
+            active = false
+            getgenv().G = false
+            btn.Text = "Kill Trolls (Boss Rush/Trollbase)"
+            btn.TextColor3 = Color3.fromRGB(255, 215, 0)
+            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        end
+    end)
+end
 
-createAbilityButton("Punisher", "Spam Ability Punisher", function()
-    game:GetService("Players").LocalPlayer.Character["Punishing Axe"].Punish:FireServer()
-end)
+-- Atajo para el jugador local
+local player = game:GetService("Players").LocalPlayer
 
-createAbilityButton("BlueBrand", "Spam Ability BlueBrand", function()
-    game:GetService("Players").LocalPlayer.Character.Bluebrand.MegaChop:FireServer()
-end)
+-- LISTA DE BOTONES
+-- Botón Especial de Muerte Automática
+createKillTrollsButton()
 
-createAbilityButton("Monotrolly", "Spam Ability Monotrolly", function()
-    game:GetService("Players").LocalPlayer.Character["Money Axe"].Upgrade:FireServer()
+-- Habilidades normales
+createAbilityButton("Zombie", "Spam Ability Zombie", function() 
+    player.Character.Attack.Devour:FireServer() 
 end)
-
--- NUEVAS HABILIDADES
-createAbilityButton("Funny", "Spam Ability Funny", function()
-    game:GetService("Players").LocalPlayer.Character.FunnyAxe.Laughjjj:FireServer()
+createAbilityButton("Corrupted", "Spam Ability Corrupted", function() 
+    player.Character["Corrupt Axe"].Strike:FireServer() 
 end)
-
-createAbilityButton("Impasta2", "Spam Ability Impasta2", function()
-    game:GetService("Players").LocalPlayer.Character.ImpastaAxe.Swing:FireServer()
+createAbilityButton("Punisher", "Spam Ability Punisher", function() 
+    player.Character["Punishing Axe"].Punish:FireServer() 
 end)
-
-createAbilityButton("Impasta3", "Spam Ability Impasta3", function()
-    game:GetService("Players").LocalPlayer.Character.ImpastaAxe.Fire:FireServer()
+createAbilityButton("BlueBrand", "Spam Ability BlueBrand", function() 
+    player.Character.Bluebrand.MegaChop:FireServer() 
+end)
+createAbilityButton("Monotrolly", "Spam Ability Monotrolly", function() 
+    player.Character["Money Axe"].Upgrade:FireServer() 
+end)
+createAbilityButton("Funny", "Spam Ability Funny", function() 
+    player.Character.FunnyAxe.Laughjjj:FireServer() 
+end)
+createAbilityButton("Impasta2", "Spam Ability Impasta2", function() 
+    player.Character.ImpastaAxe.Swing:FireServer() 
+end)
+createAbilityButton("Impasta3", "Spam Ability Impasta3", function() 
+    player.Character.ImpastaAxe.Fire:FireServer() 
 end)
