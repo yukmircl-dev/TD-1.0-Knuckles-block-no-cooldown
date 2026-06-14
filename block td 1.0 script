@@ -194,7 +194,10 @@ createAbilityButton("Impasta3", "Spam Ability Impasta3", function()
     player.Character.ImpastaAxe.Fire:FireServer() 
 end)
 
+-- lol
+
 -- NUEVA HABILIDAD AGREGADA
 createAbilityButton("OilTroll", "Spam Ability Oil Troll", function() 
     player.Character:WaitForChild("Trollge Oil"):WaitForChild("OilHeal"):FireServer() 
 end)
+
