@@ -216,6 +216,6 @@ local function createUniversalSkillButton()
     end)
 end
 
--- LISTA DE BOTONES ACTUALIZADA
+-- LISTA DE BOTONES ACTUALIZADA Y BIEN
 createKillTrollsButton()     -- Mantiene tu botón especial de muerte
 createUniversalSkillButton() -- El nuevo botón dinámico e inteligente
