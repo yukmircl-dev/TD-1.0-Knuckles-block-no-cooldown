@@ -164,40 +164,58 @@ end
 -- Atajo para el jugador local
 local player = game:GetService("Players").LocalPlayer
 
--- LISTA DE BOTONES
--- Botón Especial de Muerte Automática
-createKillTrollsButton()
+-- Función creadora para el Botón Universal "No Cooldown / Auto Skill"
+local function createUniversalSkillButton()
+    local btn = Instance.new("TextButton")
+    local active = false
+    btn.Name = "UniversalSkill"
+    btn.Parent = ScrollingFrame
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.Font = Enum.Font.GothamBold
+    btn.Text = "Activar Auto-Habilidades (Arma Equipada)"
+    btn.TextColor3 = Color3.fromRGB(0, 255, 180)
+    btn.TextSize = 11
+    btn.TextWrapped = true
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
--- Habilidades normales
-createAbilityButton("Zombie", "Spam Ability Zombie", function() 
-    player.Character.Attack.Devour:FireServer() 
-end)
-createAbilityButton("Corrupted", "Spam Ability Corrupted", function() 
-    player.Character["Corrupt Axe"].Strike:FireServer() 
-end)
-createAbilityButton("Punisher", "Spam Ability Punisher", function() 
-    player.Character["Punishing Axe"].Punish:FireServer() 
-end)
-createAbilityButton("BlueBrand", "Spam Ability BlueBrand", function() 
-    player.Character.Bluebrand.MegaChop:FireServer() 
-end)
-createAbilityButton("Monotrolly", "Spam Ability Monotrolly", function() 
-    player.Character["Money Axe"].Upgrade:FireServer() 
-end)
-createAbilityButton("Funny", "Spam Ability Funny", function() 
-    player.Character.FunnyAxe.Laughjjj:FireServer() 
-end)
-createAbilityButton("Impasta2", "Spam Ability Impasta2", function() 
-    player.Character.ImpastaAxe.Swing:FireServer() 
-end)
-createAbilityButton("Impasta3", "Spam Ability Impasta3", function() 
-    player.Character.ImpastaAxe.Fire:FireServer() 
-end)
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        if active then
+            btn.Text = "STOP AUTO-HABILIDADES"
+            btn.TextColor3 = Color3.fromRGB(255, 80, 80)
+            btn.BackgroundColor3 = Color3.fromRGB(45, 30, 30)
+            
+            task.spawn(function()
+                while active do
+                    pcall(function()
+                        local character = player.Character
+                        if character then
+                            -- Busca cualquier Tool (arma) equipada en el personaje
+                            local currentWeapon = character:FindFirstChildOfClass("Tool")
+                            if currentWeapon then
+                                -- Recorre todo lo que hay dentro del arma
+                                for _, child in pairs(currentWeapon:GetDescendants()) do
+                                    -- Si encuentra un RemoteEvent, lo dispara
+                                    if child:IsA("RemoteEvent") then
+                                        child:FireServer()
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                    task.wait(0.1) -- Ajusta el tiempo de spam aquí (0.1 segundos)
+                end
+            end)
+        else
+            active = false
+            btn.Text = "Activar Auto-Habilidades (Arma Equipada)"
+            btn.TextColor3 = Color3.fromRGB(0, 255, 180)
+            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        end
+    end)
+end
 
--- lol
-
--- NUEVA HABILIDAD AGREGADA
-createAbilityButton("OilTroll", "Spam Ability Oil Troll", function() 
-    player.Character:WaitForChild("Trollge Oil"):WaitForChild("OilHeal"):FireServer() 
-end)
-
+-- LISTA DE BOTONES ACTUALIZADA
+createKillTrollsButton()     -- Mantiene tu botón especial de muerte
+createUniversalSkillButton() -- El nuevo botón dinámico e inteligente
